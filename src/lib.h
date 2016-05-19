@@ -5,123 +5,122 @@
 
 #define pi 3.14159265
 //#define RAND_MAX 0xffffffff
-
+float *vector(int nl, int nh);
+float **matrix(int nrl,int nrh,int ncl,int nch);
+float **convert_matrix(float *a,int nrl,int nrh,int ncl,int nch);
+double *dvector(int nl,int nh);
+double **dmatrix(int nrl,int nrh,int ncl,int nch);
+int *ivector(int nl,int nh);
+int **imatrix(int nrl,int nrh,int ncl,int nch);
+float **submatrix(float** a,int oldrl,int oldrh,int oldcl,int oldch,int newrl,int newcl);
+void free_vector(float *v,int nl,int nh);
+void free_dvector(double *v,int nl,int nh);
+void free_ivector(int *v,int nl,int nh);
+void free_matrix(float **m,int nrl,int nrh,int ncl,int nch);
+void free_dmatrix(double **m,int nrl,int nrh,int ncl,int nch);
+void free_imatrix(int **m,int nrl,int nrh,int ncl,int nch);
+void free_submatrix(float **b,int nrl,int nrh,int ncl,int nch);
+void free_convert_matrix(float **b,int nrl,int nrh,int ncl,int nch);
+void nrerror(const char* error_text);
 #define TINY 1.0e-20;
-void ludcmp(a,n,indx,d);
+void ludcmp(double **a,int n, int *indx,  double *d);
 #undef TINY
-void lubksb(a,n,indx,b);
-double matrix_logdet(X, n);
+void lubksb(double **a, int n, int *indx, double *b);
+double matrix_logdet(double **X, int n);
 /* Y=inv(X), return d=log(det(X)) */ 
-double matrix_inverse(X, Y, n);
+double matrix_inverse(double **X, double **Y, int n);
 /* Y=inv(X), return d=log(det(X)) */
-int matrix_inverse_diag(X, Y, diag, n);
-double matrix_trace(A,p);
-int matrix_sum(A,B,C,n,p);
+int matrix_inverse_diag(double **X, double **Y, double *diag, int n);
+double matrix_trace(double **A,int p);
+int matrix_sum(double **A,double **B,double **C,int n,int p);
 /* Matrix: A: n by p; B: p by m;  C: n by m */
-int matrix_multiply(A,B,C,n,p,m);
-int matrix_vector_prod(A,b,d,n,p);
-double vector_matrix_vector(a,X,b,m,n);
-void copy_vector(a,b,p)         ;                                                                                                                     
-void copy_matrix(a,b,n,p);
-int choldc(a, n, D);
+int matrix_multiply(double **A,double **B,double **C,int n,int p,int m);
+int matrix_vector_prod(double **A,double *b,double *d,int n,int p);
+double vector_matrix_vector(double *a,double **X, double *b,int m,int n);
+void copy_vector(double *a,double *b,int p);                                                                                                                     
+void copy_matrix(double **a,double **b,int n,int p);
+int choldc(double **a,int n,double** D);
 /* calculate log(Gamma(s))  */
-double loggamma(xx);
+double loggamma(double xx);
 /* calculate log(k!) */
-double logpum(k);
+double logpum(int k);
 
 /* generate the random variable form Gamma(a,b) */
-double Rgamma(a,b);
+double Rgamma(double a,double b);
 
 /* Generate a random variable from Beta(1,k), where
   the first parameter is 1, the second parameter is b */
-double Rbeta(b);
+double Rbeta(double b);
 
 /* Generate deviates from Dirichlet(a1,a2,\ldots,a_k) */
-int RDirichlet(w,a,k);
+int RDirichlet(double *w,double *a,int k);
 
 double gasdev();
 
-double Rgasdev(mean,variance);
+double Rgasdev(double mean, double variance);
 
-int RNORM(x,mu,Sigma,p);
+int RNORM(double *x,double *mu,double **Sigma,int p);
 
-int Rwishart(B,df,Sigma,p);
+int Rwishart(double **B,double df,double **Sigma,int p);
 
 /* calculated the log-density of  z~gamma(a,b) */
-double dloggamma(x,a,b);
+double dloggamma(double x,double a,double b);
 
-double dloggauss(z,mean,variance);
+double dloggauss(double z,double mean,double variance);
 
-double DLOGGAUSS(z,mean,variance,p);
+double DLOGGAUSS(double *z,double *mean,double **variance, int p);
 
-double Dlogwishart(D,df,Sigma,p);
+double Dlogwishart(double **D,double df,double **Sigma,int p);
 
-int uniform_direction(d, n);
+int uniform_direction(double *d, int n);
 
-int dmaxclass(z,n);
+int dmaxclass(double *z,int n);
                                                                                                                         
-int imaxclass(z,n);
+int imaxclass(int *z,int n);
 
-int binary_trans(k,l,d);
+int binary_trans(int k,int l,int *d);
                                                                                                                                          
-double logsum(a,b);
+double logsum(double a,double b);
 
-double maxvector(x,n);
+double maxvector(double *x,int n);
 
-double minvector(x,n);
+double minvector(double *x,int n);
                                                                                                                                         
-double sample_variance(x,n);
+double sample_variance(double *x,int n);
 
 /* Return the value ln[Gamma(xx)] for xx>0 */
-double gammln(xx);
+double gammln(double xx);
 
 #define ITMAX 100
 #define EPS 3.0e-7
-void gser(gamser,a,x,gln);
+void gser(double *gamser,double a,double x,double *gln);
 
 #undef ITMAX
 #undef EPS
 
 #define ITMAX 100
 #define EPS 3.0e-7
-void gcf(gammcf,a,x,gln);
+void gcf(double *gammcf,double a,double x,double* gln);
 #undef ITMAX
 #undef EPS
 
 
-double gammp(a,x);
+double gammp(double a,double x);
 
 /* Return the CDF of the standard normal distribution */
-double Gaussp(x);
+double Gaussp(double x);
 
 /* return Gamma'(z)/Gamma(z)   */
 /* Refer to "mathematics handbook pp.287" */
-double diGamma(z);
+double diGamma(double z);
 
-double correlation(z1,z2,p);
+double correlation(double *z1,double* z2,int p);
 
-int permut_sample(sam,n);
-int random_order(x,n);
+int permut_sample(int *sam, int n);
+int random_order(int *x, int n);
 
 /* Generate a subset sample of size M from the set 1:N */
-int subset_sample(x,M,N);
+int subset_sample(int *x,int M,int N);
 
-void indexx(n,arrin,indx);
+void indexx(int n,double *arrin,int *indx);
 
-float* vector();
-float** matrix();
-float** convert_matrix();
-double* dvector();
-double** dmatrix();
-int* ivector();
-int** imatrix();
-float** submatrix();
-void free_vector();
-void free_dvector();
-void free_ivector();
-void free_matrix();
-void free_dmatrix();
-void free_imatrix();
-void free_submatrix();
-void free_convert_matrix();
-void nrerror();

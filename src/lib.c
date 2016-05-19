@@ -1,10 +1,13 @@
 #include "lib.h"
+#include <math.h>
+
+#define TINY 1.0e-20;
+#define pi 3.14159265
+
 #include <malloc.h>
 #include <stdio.h>
-#include <math.h>
-#define TINY 1.0e-20;
-void nrerror(error_text)
-char error_text[];
+
+void nrerror(const char* error_text)
 {
 //	void exit();
 //
@@ -17,8 +20,7 @@ return;
 
 
 
-float *vector(nl,nh)
-int nl,nh;
+float *vector(int nl, int nh)
 {
 	float *v;
 
@@ -27,8 +29,7 @@ int nl,nh;
 	return v-nl;
 }
 
-int *ivector(nl,nh)
-int nl,nh;
+int *ivector(int nl,int nh)
 {
 	int *v;
 
@@ -37,8 +38,7 @@ int nl,nh;
 	return v-nl;
 }
 
-double *dvector(nl,nh)
-int nl,nh;
+double *dvector(int nl,int nh)
 {
 	double *v;
 
@@ -49,8 +49,7 @@ int nl,nh;
 
 
 
-float **matrix(nrl,nrh,ncl,nch)
-int nrl,nrh,ncl,nch;
+float **matrix(int nrl,int nrh,int ncl,int nch)
 {
 	int i;
 	float **m;
@@ -67,8 +66,7 @@ int nrl,nrh,ncl,nch;
 	return m;
 }
 
-double **dmatrix(nrl,nrh,ncl,nch)
-int nrl,nrh,ncl,nch;
+double **dmatrix(int nrl,int nrh,int ncl,int nch)
 {
 	int i;
 	double **m;
@@ -85,8 +83,7 @@ int nrl,nrh,ncl,nch;
 	return m;
 }
 
-int **imatrix(nrl,nrh,ncl,nch)
-int nrl,nrh,ncl,nch;
+int **imatrix(int nrl,int nrh,int ncl,int nch)
 {
 	int i,**m;
 
@@ -104,9 +101,7 @@ int nrl,nrh,ncl,nch;
 
 
 
-float **submatrix(a,oldrl,oldrh,oldcl,oldch,newrl,newcl)
-float **a;
-int oldrl,oldrh,oldcl,oldch,newrl,newcl;
+float **submatrix(float** a,int oldrl,int oldrh,int oldcl,int oldch,int newrl,int newcl)
 {
 	int i,j;
 	float **m;
@@ -122,31 +117,24 @@ int oldrl,oldrh,oldcl,oldch,newrl,newcl;
 
 
 
-void free_vector(v,nl,nh)
-float *v;
-int nl,nh;
+void free_vector(float *v,int nl,int nh)
 {
 	free((char*) (v+nl));
 }
 
-void free_ivector(v,nl,nh)
-int *v,nl,nh;
+void free_ivector(int *v,int nl,int nh)
 {
 	free((char*) (v+nl));
 }
 
-void free_dvector(v,nl,nh)
-double *v;
-int nl,nh;
+void free_dvector(double *v,int nl,int nh)
 {
 	free((char*) (v+nl));
 }
 
 
 
-void free_matrix(m,nrl,nrh,ncl,nch)
-float **m;
-int nrl,nrh,ncl,nch;
+void free_matrix(float **m,int nrl,int nrh,int ncl,int nch)
 {
 	int i;
 
@@ -154,9 +142,7 @@ int nrl,nrh,ncl,nch;
 	free((char*) (m+nrl));
 }
 
-void free_dmatrix(m,nrl,nrh,ncl,nch)
-double **m;
-int nrl,nrh,ncl,nch;
+void free_dmatrix(double **m,int nrl,int nrh,int ncl,int nch)
 {
 	int i;
 
@@ -164,9 +150,7 @@ int nrl,nrh,ncl,nch;
 	free((char*) (m+nrl));
 }
 
-void free_imatrix(m,nrl,nrh,ncl,nch)
-int **m;
-int nrl,nrh,ncl,nch;
+void free_imatrix(int **m,int nrl,int nrh,int ncl,int nch)
 {
 	int i;
 
@@ -176,18 +160,15 @@ int nrl,nrh,ncl,nch;
 
 
 
-void free_submatrix(b,nrl,nrh,ncl,nch)
-float **b;
-int nrl,nrh,ncl,nch;
+void free_submatrix(float **b,int nrl,int nrh,int ncl,int nch)
+
 {
 	free((char*) (b+nrl));
 }
 
 
 
-float **convert_matrix(a,nrl,nrh,ncl,nch)
-float *a;
-int nrl,nrh,ncl,nch;
+float **convert_matrix(float *a,int nrl,int nrh,int ncl,int nch)
 {
 	int i,j,nrow,ncol;
 	float **m;
@@ -203,21 +184,16 @@ int nrl,nrh,ncl,nch;
 
 
 
-void free_convert_matrix(b,nrl,nrh,ncl,nch)
-float **b;
-int nrl,nrh,ncl,nch;
+void free_convert_matrix(float **b,int nrl,int nrh,int ncl,int nch)
 {
 	free((char*) (b+nrl));
 }
-
-
-void ludcmp(a,n,indx,d)
-int n,*indx;
-double **a,*d;
+void ludcmp(double **a,int n, int *indx,  double *d)
 {
 	int i,imax,j,k;
 	double big,dum,sum,temp;
 	double *vv;
+	imax = 0;
 
 	vv=dvector(1,n);
 	*d=1.0;
@@ -267,9 +243,8 @@ double **a,*d;
 #undef TINY
 
 
-void lubksb(a,n,indx,b)
-double **a,*b;
-int n,*indx;
+void lubksb(double **a, int n, int *indx, double *b)
+
 {
 	int i,ii=0,ip,j;
 	double sum;
@@ -292,12 +267,9 @@ int n,*indx;
 
 
 
-double matrix_logdet(X, n)
-double **X;
-int n;
+double matrix_logdet(double **X, int n)
 {
 int j, *indx;
-FILE *ins;
 double d, logdet;
 
   indx=ivector(1,n);
@@ -310,13 +282,10 @@ double d, logdet;
 
 
 /* Y=inv(X), return d=log(det(X)) */ 
-double matrix_inverse(X, Y, n)
-double **X, **Y;
-int n;
+double matrix_inverse(double **X, double **Y, int n)
 {
 double d, *col;
 int i, j, *indx;
-FILE *ins;
 double logdet;
 
 col=dvector(1,n);
@@ -345,14 +314,10 @@ return logdet;
 
 
 /* Y=inv(X), return d=log(det(X)) */
-int matrix_inverse_diag(X, Y, diag, n)
-double **X, **Y, *diag;
-int n;
+int matrix_inverse_diag(double **X, double **Y, double *diag, int n)
 {
 double d, *col;
 int i, j, *indx;
-FILE *ins;
-double logdet;
 
 col=dvector(1,n);
 indx=ivector(1,n);
@@ -377,9 +342,7 @@ return 0;
 
 
 
-double matrix_trace(A,p)
-double **A;
-int p;
+double matrix_trace(double **A,int p)
 {
 int i;
 double sum;
@@ -390,9 +353,7 @@ return sum;
 }
 
 
-int matrix_sum(A,B,C,n,p)
-double **A, **B, **C;
-int n, p;
+int matrix_sum(double **A,double **B,double **C,int n,int p)
 {
 int i, j;
 for(i=1; i<=n; i++)
@@ -402,9 +363,7 @@ return 0;
 
 
 /* Matrix: A: n by p; B: p by m;  C: n by m */
-int matrix_multiply(A,B,C,n,p,m)
-double **A, **B, **C;
-int n, p, m;
+int matrix_multiply(double **A,double **B,double **C,int n,int p,int m)
 {
 int i, j, k;
 for(i=1; i<=n; i++)
@@ -416,9 +375,7 @@ return 0;
 }
 
 
-int matrix_vector_prod(A,b,d,n,p)
-double **A, *b, *d;
-int n,p;
+int matrix_vector_prod(double **A,double *b,double *d,int n,int p)
 {
 int i,j;
 for(i=1; i<=n; i++){
@@ -428,9 +385,7 @@ for(i=1; i<=n; i++){
 return 0;
 }
 
-double vector_matrix_vector(a,X,b,m,n)
-double *a,**X,*b;
-int m, n;
+double vector_matrix_vector(double *a,double **X, double *b,int m,int n)
 {
 double sum;
 int i, j;
@@ -442,17 +397,13 @@ for(sum=0.0, i=1; i<=m; i++)
 }
 
 
-void copy_vector(a,b,p)
-double *a, *b;
-int p;
+void copy_vector(double *a,double *b,int p)  
 {
 int i;
 for(i=1; i<=p; i++) b[i]=a[i];
 }
                                                                                                                                          
-void copy_matrix(a,b,n,p)
-double **a,**b;
-int n, p;
+void copy_matrix(double **a,double **b,int n,int p)
 {
 int i, j;
 for(i=1; i<=n; i++)
@@ -460,10 +411,7 @@ for(i=1; i<=n; i++)
 }
 
 
-int choldc(a, n, D)
-double **a;
-int n;
-double **D;
+int choldc(double **a,int n,double** D)
 {
 int i, j, k;
 double sum, *p;
@@ -492,8 +440,7 @@ for(i=1; i<=n; i++){
 
 
 /* calculate log(Gamma(s))  */
-double loggamma(xx)
-double xx;
+double loggamma(double xx)
 {
         double x,tmp,ser;
         static double cof[6]={76.18009173,-86.50532033,24.01409822,
@@ -513,8 +460,7 @@ double xx;
 
 
 /* calculate log(k!) */
-double logpum(k)
-int k;
+double logpum(int k)
 {
 double value;
 int i;
@@ -526,14 +472,12 @@ return value;
 
 
 /* generate the random variable form Gamma(a,b) */
-double Rgamma(a,b)
-double a, b;
+double Rgamma(double a,double b)
 {
 int ok;
 double d, q, un, u1, y, z;
 
-if(a<=0.0 || b<=0.0) { /*printf("Gamma parameter error (<0.0)\n");*/
-	 return -1; }
+if(a<=0.0 || b<=0.0) { /*printf("Gamma parameter error (<0.0)\n");*/ return -1; }
 
 if(a<1.0){  /* Ahrens, P.213 */
  ok=0;
@@ -572,8 +516,7 @@ return z/b;
 
 /* Generate a random variable from Beta(1,k), where
   the first parameter is 1, the second parameter is b */
-double Rbeta(b)
-double b;
+double Rbeta(double b)
 {
 double un;
 un=0.0;
@@ -583,9 +526,7 @@ return 1.0-exp(1.0/b*log(un));
 
 
 /* Generate deviates from Dirichlet(a1,a2,\ldots,a_k) */
-int RDirichlet(w,a,k)
-double *w,*a;
-int k;
+int RDirichlet(double *w,double *a,int k)
 {
 double sum;
 int i;
@@ -621,8 +562,7 @@ double gasdev()
 }
 
 
-double Rgasdev(mean,variance)
-double mean,variance;
+double Rgasdev(double mean, double variance)
 {
         static int iset=0;
         static double gset;
@@ -645,9 +585,7 @@ double mean,variance;
 }
 
 
-int RNORM(x,mu,Sigma,p)
-double *x,*mu,**Sigma;
-int p;
+int RNORM(double *x,double *mu,double **Sigma,int p)
 {
 int i, j;
 double **D, *z;
@@ -670,9 +608,7 @@ return 0;
 }
 
 
-int Rwishart(B,df,Sigma,p)
-double **B,df,**Sigma;
-int p;
+int Rwishart(double **B,double df,double **Sigma,int p)
 {
 double **Z, **A, *Y;
 int i, j, k;
@@ -720,8 +656,7 @@ return 0;
 
 
 /* calculated the log-density of  z~gamma(a,b) */
-double dloggamma(x,a,b)
-double x,a,b;
+double dloggamma(double x,double a,double b)
 {
 double logcon, den;
 logcon=loggamma(a);
@@ -730,8 +665,7 @@ return den;
 }
 
 
-double dloggauss(z,mean,variance)
-double z,mean,variance;
+double dloggauss(double z,double mean,double variance)
 {
 double sum;
 sum=-0.5*log(2.0*pi*variance);
@@ -739,9 +673,7 @@ sum+=-0.5*(z-mean)*(z-mean)/variance;
 return sum;
 }
 
-double dlogstudent(z,k)
-double z;
-int k;  /* the degree of freedom */
+double dlogstudent(double z,double k)
 {
 double logprob;
 logprob=-0.5*(k+1)*log(1.0+z*z/k);
@@ -750,11 +682,9 @@ return logprob;
 
 
 
-double DLOGGAUSS(z,mean,variance,p)
-double *z, *mean, **variance;
-int p;
+double DLOGGAUSS(double *z,double *mean,double **variance, int p)
 {
-int i,j;
+int i;
 double logdet, sum, **mat,*vect, *mu;
 
 mat=dmatrix(1,p,1,p);
@@ -777,9 +707,7 @@ return sum;
 }
 
 
-double Dlogwishart(D,df,Sigma,p)
-double **D,df,**Sigma;
-int p;
+double Dlogwishart(double **D,double df,double **Sigma,int p)
 {
 int i, j;
 double a, sum, logdet1, logdet2, **mt1, **mt2;
@@ -816,9 +744,7 @@ return sum;
 }
 
 
-int uniform_direction(d, n)
-double *d;
-int n;
+int uniform_direction(double *d, int n)
 {
 double sum;
 int k;
@@ -834,9 +760,7 @@ return 0;
  }
 
 
-int dmaxclass(z,n)
-double *z;
-int n;
+int dmaxclass(double *z,int n)
 {
 int i, maxi;
 double maxd;
@@ -848,8 +772,7 @@ for(i=2; i<=n; i++)
 return maxi;
 }
                                                                                                                                          
-int imaxclass(z,n)
-int *z, n;
+int imaxclass(int *z,int n)
 {
 int i, maxi;
 int maxd;
@@ -862,8 +785,7 @@ return maxi;
 }
 
 
-int binary_trans(k,l,d)
-int k, l,*d;
+int binary_trans(int k,int l,int *d)
 {
 int i, j;
 for(i=1; i<=l; i++) d[i]=0;
@@ -877,8 +799,7 @@ return 0;
 }
                                                                                                                                          
                                                                                                                                          
-double logsum(a,b)
-        double a, b;
+double logsum(double a,double b)
 {
         double sum;
         if(a>b) sum=a+log(1.0+exp(b-a));
@@ -887,9 +808,7 @@ double logsum(a,b)
 }
 
 
-double maxvector(x,n)
- double *x;
- int n;
+double maxvector(double *x,int n)
 {
 double max;
 int i;
@@ -900,9 +819,7 @@ int i;
  }
 
 
-double minvector(x,n)
- double *x;
- int n;
+double minvector(double *x,int n)
 {
 double min;
 int i;
@@ -914,9 +831,7 @@ int i;
 
                                                                                                                                          
                                                                                                                                          
-double sample_variance(x,n)
-double *x;
-int n;
+double sample_variance(double *x,int n)
 {
 int i;
 double sum1, sum2, mean, var;
@@ -935,8 +850,7 @@ return var;
 
 
 /* Return the value ln[Gamma(xx)] for xx>0 */
-double gammln(xx)
-double xx;
+double gammln(double xx)
 {
         double x,tmp,ser;
         static double cof[6]={76.18009173,-86.50532033,24.01409822,
@@ -957,8 +871,7 @@ double xx;
 
 #define ITMAX 100
 #define EPS 3.0e-7
-void gser(gamser,a,x,gln)
-double a,x,*gamser,*gln;
+void gser(double *gamser,double a,double x,double *gln)
 {
 	int n;
 	double sum,del,ap;
@@ -991,8 +904,7 @@ double a,x,*gamser,*gln;
 
 #define ITMAX 100
 #define EPS 3.0e-7
-void gcf(gammcf,a,x,gln)
-double a,x,*gammcf,*gln;
+void gcf(double *gammcf,double a,double x,double* gln)
 {
 	int n;
 	double gold=0.0,g,fac=1.0,b1=1.0;
@@ -1026,8 +938,7 @@ double a,x,*gammcf,*gln;
 #undef EPS
 
 
-double gammp(a,x)
-double a,x;
+double gammp(double a,double x)
 {
         double gamser,gammcf,gln;
         /* void gser(),gcf(),nrerror(); */
@@ -1045,8 +956,7 @@ double a,x;
 
 
 /* Return the CDF of the standard normal distribution */
-double Gaussp(x)
-double x;
+double Gaussp(double x)
 {
 double s, prob;
 
@@ -1060,8 +970,7 @@ return prob;
 
 /* return Gamma'(z)/Gamma(z)   */
 /* Refer to "mathematics handbook pp.287" */
-double diGamma(z)
-double z;
+double diGamma(double z)
 {
 int i;
 double sum, delta, epsilon=3.0e-7;
@@ -1080,9 +989,7 @@ while(delta>epsilon){
 return sum;
 }
 
-double correlation(z1,z2,p)
-double *z1, *z2;
-int p;
+double correlation(double *z1,double* z2,int p)
 {
 double ave1, ave2, sq1, sq2, sum;
 int i;
@@ -1106,8 +1013,7 @@ if(sq1<=0.0 || sq2<=0.0) return 0.0;
 }
 
 
-int permut_sample(sam,n)
-int *sam, n;
+int permut_sample(int *sam, int n)
 {
 int j,k,u,v,*b;
 
@@ -1128,8 +1034,7 @@ int j,k,u,v,*b;
 
 
 
-int random_order(x,n)
-int *x, n;
+int random_order(int *x, int n)
 {
 int i, j, k, m, *y;
 
@@ -1152,8 +1057,7 @@ return 0;
 
 
 /* Generate a subset sample of size M from the set 1:N */
-int subset_sample(x,M,N)
-int *x, M, N;
+int subset_sample(int *x,int M,int N)
 {
 int i, j, k, m, *y;
 
@@ -1176,9 +1080,7 @@ return 0;
 
 
 
-void indexx(n,arrin,indx)
-int n,*indx;
-double *arrin;
+void indexx(int n,double *arrin,int *indx)
 {
         int l,j,ir,indxt,i;
         double q;
