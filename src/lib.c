@@ -4,7 +4,6 @@
 #define TINY 1.0e-20;
 #define pi 3.14159265
 
-#include <malloc.h>
 #include <stdio.h>
 
 void nrerror(const char* error_text)

@@ -15,17 +15,17 @@ void RSAc(double *pData,int* pDataCol,int* pDataNum, int* pSampleNum,int* pSteps
 
 double **ppData;
 
-FILE *ins;
+//FILE *ins;
 int stime;
 long ltime;
 int i, j, *sam, iter, truncation, truncount;
-double logphi, logkappa, logsigmasq, logtausq;
+double logphi, logsigmasq, logtausq;//logkappa, 
 double phi, kappa, sigmasq, tausq;
-double Dphi, Dkappa, Dsigmasq, Dtausq;
+double Dphi, Dsigmasq, Dtausq;//Dkappa,
 double *avebeta, avephi, avesigmasq, avetausq;
 double *Dbeta, *beta;
 double **Dist,**R,**V,**IV,**DRphi, **DRkappa, *mu,**C,*zmu,*b;
-double delta, sum, a, max;
+double delta, sum, a; //max;
 double low[6],up[6],sze[6],lower[6],upper[6], add[*pDataCol+1], delctrl;
 
 int sampleNum = *pSampleNum;
